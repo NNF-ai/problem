@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문제해결능력 자가진단</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f9; padding: 20px; line-height: 1.6; }
+        .container { max-width: 600px; background: white; padding: 20px; border-radius: 10px; shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1 { font-size: 1.2rem; text-align: center; border: 2px solid #000; padding: 10px; }
+        .section-title { background: #eee; padding: 5px 10px; margin-top: 20px; font-weight: bold; }
+        .question { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .options { display: flex; justify-content: space-around; margin-top: 8px; }
+        label { font-size: 0.9rem; }
+        button { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 5px; font-size: 1rem; cursor: pointer; margin-top: 20px; }
+        #result { margin-top: 20px; padding: 15px; background: #e9ecef; border-radius: 5px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>문제해결능력 자가진단도구</h1>
+    <p style="font-size: 0.8rem; color: #666;">* 미흡(1점), 보통(3점), 우수(5점)로 계산합니다.</p>
+
+    <div id="quiz-form">
+        <div class="section-title">사고력 (창의적/논리적/비판적)</div>
+        <div id="section1"></div>
+
+        <div class="section-title">문제처리능력 (인식/선택/적용/평가)</div>
+        <div id="section2"></div>
+
+        <button onclick="calculateScore()">결과 확인하기</button>
+    </div>
+
+    <div id="result">
+        <h3>진단 결과</h3>
+        <p id="score-details"></p>
+        <h2 id="total-score" style="text-align: center; color: #007bff;"></h2>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        "1. 문제가 발생했을 때, 남들과는 다른 시각으로 그것을 바라본다.",
+        "2. 새롭고 다양한 아이디어를 가족이나 동료(친구)에게 제공한다.",
+        "3. 자신이 속한 조직에 도움이 되는 아이디어를 동료에게 제공한다.",
+        "4. 다듬어지지 않은 생각이나 아이디어를 나름대로 분석하고 종합한다.",
+        "5. 자신의 생각을 체계적이고 논리적으로 동료(친구)에게 설명한다.",
+        "6. 자신의 생각을 동료(친구)에게 표현할 때, 신뢰할 수 있는 정보를 활용하여 충분한 근거를 제시한다.",
+        "7. 자신의 경험이나 편견에 따르지 아니하고 나름대로 객관적인 근거에 의해 일을 처리한다.",
+        "8. 문제를 해결하는데 어려움을 겪었다면 왜 그러하였는지를 다시 한 번 생각한다.",
+        "9. 누군가의 지시를 무조건적으로 수용하지 않고 자신의 생각을 업무에 적용시킨다.",
+        "10. 제시된 다양한 아이디어를 평가하는데 자신의 의견을 적극적으로 표현한다.",
+        "11. 문제가 발생하였을 때, 그 상황을 바르게 가족이나 동료(친구)에게 전달한다.",
+        "12. 문제가 발생하였을 때, 왜 그러한 문제가 발생하였는지 가족이나 동료(친구)에게 논리적으로 설명한다.",
+        "13. 문제가 발생하였을 때, 발생한 문제가 어떠한 결과를 가져올지 예측할 수 있다.",
+        "14. 문제가 발생하였을 때, 문제 해결을 위해 문제 상황에 적합한 정보를 수집한다.",
+        "15. 문제가 발생하였을 때, 문제 해결을 위한 다양한 대안을 가족이나 동료(친구)에게 제시한다.",
+        "16. 문제가 발생하였을 때, 문제 해결을 위해 제시된 다양한 대안을 논리적으로 비교·검토한다.",
+        "17. 문제해결을 위해 선택된 대안이 실제로 실천가능한 것인지를 고려한다.",
+        "18. 문제해결을 위해 선택된 대안의 구체적인 실행방법을 가족이나 동료(친구)에게 설명할 수 있다.",
+        "19. 주변에서 발생하는 여러 가지 문제에 대해서 우선적으로 처리해야 할 것을 고려해서 먼저 처리한다.",
+        "20. 문제해결을 위해 정해진 방법을 적극적으로 실천하고, 원만하게 문제가 해결되었다면 그것을 검토하고 평가한다."
+    ];
+
+    function renderQuestions() {
+        const s1 = document.getElementById('section1');
+        const s2 = document.getElementById('section2');
+        
+        questions.forEach((q, i) => {
+            const html = `
+                <div class="question">
+                    <p>${q}</p>
+                    <div class="options">
+                        <label><input type="radio" name="q${i}" value="1" required> 미흡</label>
+                        <label><input type="radio" name="q${i}" value="3" checked> 보통</label>
+                        <label><input type="radio" name="q${i}" value="5"> 우수</label>
+                    </div>
+                </div>`;
+            if (i < 10) s1.innerHTML += html;
+            else s2.innerHTML += html;
+        });
+    }
+
+    function calculateScore() {
+        let score1 = 0; let score2 = 0;
+        for (let i = 0; i < 20; i++) {
+            const val = parseInt(document.querySelector(`input[name="q${i}"]:checked`).value);
+            if (i < 10) score1 += val;
+            else score2 += val;
+        }
+        
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('score-details').innerHTML = `사고력: ${score1}/50점<br>문제처리능력: ${score2}/50점`;
+        document.getElementById('total-score').innerText = `총점: ${score1 + score2}/100점`;
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    renderQuestions();
+</script>
+</body>
+</html>
